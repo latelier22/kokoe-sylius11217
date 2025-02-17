@@ -25,7 +25,7 @@
         "php": "^8.1",
         "asdoria/sylius-bulk-edit-plugin": "*",
         "flux-se/sylius-payum-stripe-plugin": "^2.0",
-        "friendsofsylius/sylius-import-export-plugin": "^0.26.0",
+        "friendsofsylius/sylius-import-export-plugin": "^0.27.0",
         "portphp/csv": "^2.0",
         "portphp/spreadsheet": "^1.0",
         "sylius/admin-order-creation-plugin": "^0.15.0",
