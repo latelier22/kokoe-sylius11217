@@ -25,7 +25,7 @@ jobs:
 
     - name: Install PHP dependencies
       run: |
-        ssh -i ~/.ssh/id_rsa debian@vps.latelier22.fr "cd /home/debian/kokoe && composer install --no-dev --optimize-autoloader"
+        ssh -i ~/.ssh/id_rsa debian@vps.latelier22.fr "cd /home/debian/kokoe && composer install 
 
     - name: Install Node dependencies and build assets
       run: |
