@@ -1,0 +1,37 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main  # Déclenche le workflow lors d'un push sur la branche `main`
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Utilisation de l'image Ubuntu pour exécuter le workflow
+
+    steps:
+      # Étape 1 : Checkout du code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Étape 2 : Installer l'agent SSH pour se connecter au serveur sans mot de passe
+      - name: Set up SSH key for secure connection
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Clé privée SSH pour se connecter à votre serveur
+
+      # Étape 3 : Déployer l'application sur le VPS
+      - name: Deploy to VPS
+        run: |
+          # Se connecter au VPS et effectuer les étapes de déploiement
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'ENDSSH'
+            cd /home/debian/kokoe || exit 1
+            git pull origin main  # Récupérer les dernières modifications de la branche principale
+            sudo rsync -avz --delete ./ $USER@$HOST:/home/debian/kokoe  # Synchronisation du code source via rsync
+            sudo systemctl restart nginx  # Redémarrer Nginx pour appliquer les changements
+            echo "Déploiement réussi!"
+          ENDSSH
+
+      # Étape 4 : Affichage du message de confirmation
+      - name: Notify success
+        run: echo "Déploiement terminé avec succès !"
