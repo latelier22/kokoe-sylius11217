@@ -9,16 +9,7 @@ LOCAL_DIR="./"           # Répertoire local contenant votre code Sylius
 # Effectuer la synchronisation avec rsync
 echo "Déploiement de l'application Sylius sur le VPS..."
 
-# Exécuter rsync et rediriger la sortie dans le fichier rsync.log
-rsync -avz --delete --exclude='vendor/' --exclude='node_modules/'  --exclude='build/' --quiet --log-file='rsync.log' $LOCAL_DIR/ $USER@$HOST:$REMOTE_DIR/
-
-# Vérifier si l'exécution a réussi
-if [ $? -eq 0 ]; then
-  echo "La synchronisation a réussi, maintenant l'installation des dépendances..."
-else
-  echo "Erreur lors de la synchronisation. Veuillez vérifier rsync.log pour plus de détails."
-  exit 1
-fi
+rsync -avz --delete $LOCAL_DIR/ $USER@$HOST:$REMOTE_DIR/
 
 # Se connecter en SSH et installer les dépendances
 ssh $USER@$HOST << ENDSSH
@@ -31,6 +22,7 @@ ssh $USER@$HOST << ENDSSH
   composer install --optimize-autoloader
 
   # Installer les dépendances Node.js avec pnpm
+  
   sudo pnpm i
 
   # Construire les assets frontend avec pnpm
