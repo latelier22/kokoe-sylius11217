@@ -13,7 +13,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Copy files to VPS
+    - name: Copy files to VPS (excluding vendor/)
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
@@ -21,4 +21,12 @@ jobs:
         echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H vps.latelier22.fr >> ~/.ssh/known_hosts
-        rsync -avz --delete ./ debian@vps.latelier22.Fr:/home/debian/kokoe/
+        rsync -avz --exclude 'vendor/' --delete ./ debian@vps.latelier22.Fr:/home/debian/kokoe/
+
+    - name: Install PHP dependencies
+      run: |
+        ssh -i ~/.ssh/id_rsa debian@vps.latelier22.fr "cd /home/debian/kokoe && composer install"
+        
+    - name: Restart Nginx
+      run: |
+        ssh -i ~/.ssh/id_rsa debian@vps.latelier22.fr "sudo systemctl restart nginx"
